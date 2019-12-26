@@ -27,7 +27,7 @@ func main() {
 			bx, by := corner(i, j)
 			cx, cy := corner(i, j+1)
 			dx, dy := corner(i+1, j+1)
-			fmt.Printf("<polygon points='%g,%g %g,%g %g,%g %g,%g/>\n",
+			fmt.Printf("<polygon points='%g,%g %g,%g %g,%g %g,%g'/>\n",
 				ax, ay, bx, by, cx, cy, dx, dy)
 		}
 	}
@@ -36,7 +36,7 @@ func main() {
 
 func corner(i, j int) (float64, float64) {
 	x := xyrange * (float64(i)/cells - 0.5)
-	y := xyrange * (float64(i)/cells - 0.5)
+	y := xyrange * (float64(j)/cells - 0.5)
 	z := f(x, y)
 
 	sx := width/2 + (x-y)*cos30*xyscale
