@@ -32,7 +32,7 @@ func main() {
 				fmt.Printf("<polygon points='%g,%g %g,%g %g,%g %g,%g'/>\n",
 					ax, ay, bx, by, cx, cy, dx, dy)
 			} else {
-				log.Println("poligon point over limit")
+				log.Println("polygon point over limit")
 			}
 		}
 	}

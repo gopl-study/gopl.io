@@ -18,7 +18,7 @@ func main() {
 	for py := 0; py < height; py++ {
 		y := float64(py)/height*(ymax-ymin) + ymin
 		for px := 0; px < width; px++ {
-			x := float64(px)/width(xmax-xmin) + xmin
+			x := float64(px)/width*(xmax-xmin) + xmin
 			z := complex(x, y)
 
 			img.Set(px, py, mandelbrot(z))
