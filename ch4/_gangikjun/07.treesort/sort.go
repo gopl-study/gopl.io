@@ -1,18 +1,34 @@
-// Copyright © 2016 Alan A. A. Donovan & Brian W. Kernighan.
-// License: https://creativecommons.org/licenses/by-nc-sa/4.0/
+package main
 
-// See page 101.
+import (
+	"fmt"
+	"log"
+	"math/rand"
+	"sort"
+)
 
-// Package treesort provides insertion sort using an unbalanced binary tree.
-package treesort
+func main() {
+	data := make([]int, 5)
+	for i := range data {
+		data[i] = rand.Int() % 50
+	}
 
-//!+
+	fmt.Println(data)
+
+	Sort(data)
+	if !sort.IntsAreSorted(data) {
+		log.Fatalf("not sorted: %v", data)
+	}
+
+	fmt.Println(data)
+}
+
 type tree struct {
 	value       int
 	left, right *tree
 }
 
-// Sort sorts values in place.
+// Sort 는 값을 직접 정렬한다
 func Sort(values []int) {
 	var root *tree
 	for _, v := range values {
@@ -21,8 +37,6 @@ func Sort(values []int) {
 	appendValues(values[:0], root)
 }
 
-// appendValues appends the elements of t to values in order
-// and returns the resulting slice.
 func appendValues(values []int, t *tree) []int {
 	if t != nil {
 		values = appendValues(values, t.left)
@@ -34,7 +48,7 @@ func appendValues(values []int, t *tree) []int {
 
 func add(t *tree, value int) *tree {
 	if t == nil {
-		// Equivalent to return &tree{value: value}.
+		// &tree{value: value} 반환과 같다.
 		t = new(tree)
 		t.value = value
 		return t
@@ -46,5 +60,3 @@ func add(t *tree, value int) *tree {
 	}
 	return t
 }
-
-//!-
