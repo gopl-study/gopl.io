@@ -11,16 +11,19 @@ func rotateJuggling(arr []int, k int) {
 		}
 		return i
 	}
+
 	gcdResult := gcd(k, arrLen)
 	for i := 0; i < gcdResult; i++ {
 		temp := arr[i]
-		for j, jump := i, JumpIndex(i+k); true; jump = JumpIndex(j + k) {
-			if jump == i {
+		var nextIndex int
+		for j := i; true; {
+			nextIndex = JumpIndex(j + k)
+			if nextIndex == i {
 				arr[j] = temp
 				break
 			}
-			arr[j] = arr[jump]
-			j = jump
+			arr[j] = arr[nextIndex]
+			j = nextIndex
 		}
 	}
 }
@@ -33,7 +36,7 @@ func gcd(a int, b int) int {
 }
 
 func main() {
-	a := [...]int{0, 1, 2, 3, 4, 5}
-	rotateJuggling(a[:], 3)
-	fmt.Println(a) // [3 4 5 0 1 2]
+	a := [...]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	rotateJuggling(a[:], 2)
+	fmt.Println(a) // [2 3 4 5 6 7 8 9 0 1]
 }
