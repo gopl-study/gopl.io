@@ -7,6 +7,7 @@ func deduplication(strings []string) {
 	for i, s := range strings {
 		if before == s {
 			strings[i] = ""
+			continue
 		}
 		before = s
 	}
