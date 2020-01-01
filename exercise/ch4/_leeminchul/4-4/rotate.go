@@ -3,26 +3,26 @@ package main
 import "fmt"
 
 // arr 를 k 번 왼쪽으로 rotate
-func rotateJuggling(arr []int, k int) {
-	arrLen := len(arr)
+func rotateJuggling(slice []int, k int) {
+	length := len(slice)
 	JumpIndex := func(i int) int {
-		if arrLen <= i {
-			i -= arrLen
+		if length <= i {
+			i -= length
 		}
 		return i
 	}
 
-	gcdResult := gcd(k, arrLen)
+	gcdResult := gcd(k, length)
 	for i := 0; i < gcdResult; i++ {
-		temp := arr[i]
+		temp := slice[i]
 		var nextIndex int
 		for j := i; true; {
 			nextIndex = JumpIndex(j + k)
 			if nextIndex == i {
-				arr[j] = temp
+				slice[j] = temp
 				break
 			}
-			arr[j] = arr[nextIndex]
+			slice[j] = slice[nextIndex]
 			j = nextIndex
 		}
 	}
