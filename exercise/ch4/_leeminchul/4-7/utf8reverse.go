@@ -37,7 +37,7 @@ func reverse(s []byte) {
 }
 
 func main() {
-	s := []byte("수.박이박수")
+	s := []byte("가나다라마바사아자차카타파하")
 	Utf8Reverse(s)
 	fmt.Println(string(s))
 }
