@@ -2,15 +2,11 @@ package main
 
 import (
 	"fmt"
+
+	"./templates"
 )
 
 func main() {
-	type point struct {
-		x, y, z int
-		id      int32
-		name    string
-	}
-
-	p := point{1, 2, 3, 4, "a"}
-	fmt.Println(p)
+	fmt.Printf("%s\n", templates.Hello("Foo"))
+	fmt.Printf("%s\n", templates.Hello("Bar"))
 }
