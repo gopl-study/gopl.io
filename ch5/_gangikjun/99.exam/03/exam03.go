@@ -2,9 +2,7 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -12,31 +10,17 @@ import (
 )
 
 func main() {
-	htmlText, err := getHTML("https://golang.org")
+	resp, err := http.Get("https://golang.org")
 	if err != nil {
-		log.Fatalln("getHTML : ", err)
+		log.Fatalln("http.Get : ", err)
 	}
 
-	htmlReader := bytes.NewReader(htmlText)
-	doc, err := html.Parse(htmlReader)
+	doc, err := html.Parse(resp.Body)
 	if err != nil {
 		log.Fatalf("html.Parse: %v\n", err)
 	}
 
 	printTextElement(doc)
-}
-
-func getHTML(url string) ([]byte, error) {
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	b, err := ioutil.ReadAll(resp.Body)
-	resp.Body.Close()
-	if err != nil {
-		return nil, err
-	}
-	return b, nil
 }
 
 func printTextElement(n *html.Node) {
