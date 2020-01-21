@@ -1,40 +1,33 @@
-// Copyright © 2016 Alan A. A. Donovan & Brian W. Kernighan.
-// License: https://creativecommons.org/licenses/by-nc-sa/4.0/
-
-// See page 165.
-
-// Package intset provides a set of integers based on a bit vector.
-package intset
+package main
 
 import (
 	"bytes"
 	"fmt"
 )
 
-//!+intset
-
-// An IntSet is a set of small non-negative integers.
-// Its zero value represents the empty set.
+// IntSet 은 소수의 양의 정수 집합니다.
+// 제로 값은 진 집합을 나타낸다.
 type IntSet struct {
 	words []uint64
 }
 
-// Has reports whether the set contains the non-negative value x.
+// Has 는 집합에 양의 값 x가 있는지 여부를 보고한다
 func (s *IntSet) Has(x int) bool {
 	word, bit := x/64, uint(x%64)
 	return word < len(s.words) && s.words[word]&(1<<bit) != 0
 }
 
-// Add adds the non-negative value x to the set.
+// Add 는 양의 값 x를 집합에 추가한다
 func (s *IntSet) Add(x int) {
 	word, bit := x/64, uint(x%64)
 	for word >= len(s.words) {
 		s.words = append(s.words, 0)
 	}
 	s.words[word] |= 1 << bit
+	fmt.Printf("%08b\n", s.words[word])
 }
 
-// UnionWith sets s to the union of s and t.
+// UnionWith 는 s를 s와 t의 합집합으로 설정한다
 func (s *IntSet) UnionWith(t *IntSet) {
 	for i, tword := range t.words {
 		if i < len(s.words) {
@@ -45,11 +38,7 @@ func (s *IntSet) UnionWith(t *IntSet) {
 	}
 }
 
-//!-intset
-
-//!+string
-
-// String returns the set as a string of the form "{1 2 3}".
+// String 은 집합을 "{1 2 3}" 형태의 문자열로 반환한다
 func (s *IntSet) String() string {
 	var buf bytes.Buffer
 	buf.WriteByte('{')
@@ -70,4 +59,23 @@ func (s *IntSet) String() string {
 	return buf.String()
 }
 
-//!-string
+func main() {
+	var x, y IntSet
+	x.Add(1)
+	x.Add(144)
+	x.Add(9)
+	fmt.Println(x.String())
+
+	y.Add(9)
+	y.Add(42)
+	fmt.Println(y.String())
+
+	x.UnionWith(&y)
+	fmt.Println(x.String())
+
+	fmt.Println(x.Has(9), x.Has(123))
+
+	fmt.Println(&x)
+	fmt.Println(x.String())
+	fmt.Println(x)
+}
