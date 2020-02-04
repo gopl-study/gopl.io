@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
+	"sync"
 )
 
 // Celsius 섭씨
@@ -64,4 +66,10 @@ var temp = CelsiusFlag("temp", 20.0, "the temperature")
 func main() {
 	flag.Parse()
 	fmt.Println(*temp)
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	var w io.Writer
+	w.Write([]byte("a"))
 }

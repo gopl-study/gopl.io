@@ -1,10 +1,3 @@
-// Copyright © 2016 Alan A. A. Donovan & Brian W. Kernighan.
-// License: https://creativecommons.org/licenses/by-nc-sa/4.0/
-
-// See page 194.
-
-// Http3 is an e-commerce server that registers the /list and /price
-// endpoints by calling (*http.ServeMux).Handle.
 package main
 
 import (
@@ -13,19 +6,17 @@ import (
 	"net/http"
 )
 
-type dollars float32
-
-func (d dollars) String() string { return fmt.Sprintf("$%.2f", d) }
-
-//!+main
-
 func main() {
 	db := database{"shoes": 50, "socks": 5}
 	mux := http.NewServeMux()
 	mux.Handle("/list", http.HandlerFunc(db.list))
-	mux.Handle("/price", http.HandlerFunc(db.price))
+	mux.Handle("/list", http.HandlerFunc(db.price))
 	log.Fatal(http.ListenAndServe("localhost:8000", mux))
 }
+
+type dollars float32
+
+func (d dollars) String() string { return fmt.Sprintf("$%.2f", d) }
 
 type database map[string]dollars
 
@@ -45,17 +36,3 @@ func (db database) price(w http.ResponseWriter, req *http.Request) {
 	}
 	fmt.Fprintf(w, "%s\n", price)
 }
-
-//!-main
-
-/*
-//!+handlerfunc
-package http
-
-type HandlerFunc func(w ResponseWriter, r *Request)
-
-func (f HandlerFunc) ServeHTTP(w ResponseWriter, r *Request) {
-	f(w, r)
-}
-//!-handlerfunc
-*/
