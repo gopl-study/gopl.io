@@ -1,13 +1,4 @@
-// Copyright © 2016 Alan A. A. Donovan & Brian W. Kernighan.
-// License: https://creativecommons.org/licenses/by-nc-sa/4.0/
-
-// See page 249.
-
-// The du2 command computes the disk usage of the files in a directory.
 package main
-
-// The du2 variant uses select and a time.Ticker
-// to print the totals periodically if -v is set.
 
 import (
 	"flag"
@@ -18,21 +9,17 @@ import (
 	"time"
 )
 
-//!+
 var verbose = flag.Bool("v", false, "show verbose progress messages")
 
 func main() {
-	// ...start background goroutine...
-
-	//!-
-	// Determine the initial directories.
+	// 최초 디렉토리 설정
 	flag.Parse()
 	roots := flag.Args()
 	if len(roots) == 0 {
 		roots = []string{"."}
 	}
 
-	// Traverse the file tree.
+	// 파일 트리 탐색
 	fileSizes := make(chan int64)
 	go func() {
 		for _, root := range roots {
@@ -41,11 +28,12 @@ func main() {
 		close(fileSizes)
 	}()
 
-	//!+
-	// Print the results periodically.
+	// 주기적으로 결과 출력
 	var tick <-chan time.Time
+	ticker := time.NewTicker(500 * time.Millisecond)
+	defer ticker.Stop()
 	if *verbose {
-		tick = time.Tick(500 * time.Millisecond)
+		tick = ticker.C
 	}
 	var nfiles, nbytes int64
 loop:
@@ -53,7 +41,7 @@ loop:
 		select {
 		case size, ok := <-fileSizes:
 			if !ok {
-				break loop // fileSizes was closed
+				break loop
 			}
 			nfiles++
 			nbytes += size
@@ -61,17 +49,16 @@ loop:
 			printDiskUsage(nfiles, nbytes)
 		}
 	}
-	printDiskUsage(nfiles, nbytes) // final totals
+	printDiskUsage(nfiles, nbytes)
 }
-
-//!-
 
 func printDiskUsage(nfiles, nbytes int64) {
-	fmt.Printf("%d files  %.1f GB\n", nfiles, float64(nbytes)/1e9)
+	// 1e9 == 1 * 10의9제곱' == 1000000000
+	fmt.Printf("%d files %.1f GB\n", nfiles, float64(nbytes)/1e9)
 }
 
-// walkDir recursively walks the file tree rooted at dir
-// and sends the size of each found file on fileSizes.
+// walkDir은 dir부터 파일 트리를 재귀적으로 탐색하며
+// 찾은 파일의 크기를 fileSizes로 보낸다.
 func walkDir(dir string, fileSizes chan<- int64) {
 	for _, entry := range dirents(dir) {
 		if entry.IsDir() {
@@ -83,11 +70,11 @@ func walkDir(dir string, fileSizes chan<- int64) {
 	}
 }
 
-// dirents returns the entries of directory dir.
+// dirents 는 dir 디렉토리의 항목을 반환
 func dirents(dir string) []os.FileInfo {
 	entries, err := ioutil.ReadDir(dir)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "du: %v\n", err)
+		fmt.Fprintf(os.Stderr, "du1: %v\n", err)
 		return nil
 	}
 	return entries

@@ -12,7 +12,6 @@ func main() {
 	var n int
 
 	n++
-	// go func() { worklist <- []string{"http://gopl.io"} }()
 	go func() { worklist <- []string{"http://naver.com"} }()
 
 	seen := make(map[string]bool)
