@@ -86,9 +86,11 @@ func printDiskUsage(nfiles, nbytes int64) {
 // 찾은 파일의 크기를 fileSizes로 보낸다.
 func walkDir(dir string, n *sync.WaitGroup, fileSizes chan<- int64) {
 	defer n.Done()
+
 	if cancelled() {
 		return
 	}
+
 	for _, entry := range dirents(dir) {
 		if entry.IsDir() {
 			n.Add(1)
@@ -104,6 +106,7 @@ var sema = make(chan struct{}, 20)
 
 // dirents 는 dir 디렉토리의 항목을 반환
 func dirents(dir string) []os.FileInfo {
+
 	select {
 	case sema <- struct{}{}:
 	case <-done:
@@ -111,6 +114,9 @@ func dirents(dir string) []os.FileInfo {
 	}
 	defer func() { <-sema }()
 
+
+	sema <- struct{}{}
+	defer func() { <-sema }()
 	entries, err := ioutil.ReadDir(dir)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "du1: %v\n", err)
