@@ -1,9 +1,3 @@
-// Copyright © 2016 Alan A. A. Donovan & Brian W. Kernighan.
-// License: https://creativecommons.org/licenses/by-nc-sa/4.0/
-
-// See page 349.
-
-// Package params provides a reflection-based parser for URL parameters.
 package params
 
 import (
@@ -14,21 +8,19 @@ import (
 	"strings"
 )
 
-//!+Unpack
-
-// Unpack populates the fields of the struct pointed to by ptr
-// from the HTTP request parameters in req.
+// Unpack 은 req의 HTTP 요청 파라미터로
+// ptr로 지정된 구조체 필드를 채운다
 func Unpack(req *http.Request, ptr interface{}) error {
 	if err := req.ParseForm(); err != nil {
 		return err
 	}
 
-	// Build map of fields keyed by effective name.
+	// 유효한 이름을 키로 갖는 필드의 맵을 생성한다
 	fields := make(map[string]reflect.Value)
-	v := reflect.ValueOf(ptr).Elem() // the struct variable
+	v := reflect.ValueOf(ptr).Elem() // 구조체 변수
 	for i := 0; i < v.NumField(); i++ {
 		fieldInfo := v.Type().Field(i) // a reflect.StructField
-		tag := fieldInfo.Tag           // a reflect.StructTag
+		tag := fieldInfo.Tag // a reflect.StructTag
 		name := tag.Get("http")
 		if name == "" {
 			name = strings.ToLower(fieldInfo.Name)
@@ -36,11 +28,11 @@ func Unpack(req *http.Request, ptr interface{}) error {
 		fields[name] = v.Field(i)
 	}
 
-	// Update struct field for each parameter in the request.
+	// 구조체 필드를 요청의 각 파라미터로 갱신한다
 	for name, values := range req.Form {
 		f := fields[name]
 		if !f.IsValid() {
-			continue // ignore unrecognized HTTP parameters
+			continue // 알 수 없는 HTTP 파라미터 무시
 		}
 		for _, value := range values {
 			if f.Kind() == reflect.Slice {
@@ -51,7 +43,7 @@ func Unpack(req *http.Request, ptr interface{}) error {
 				f.Set(reflect.Append(f, elem))
 			} else {
 				if err := populate(f, value); err != nil {
-					return fmt.Errorf("%s: %v", name, err)
+					return fmt.Errorf("%s : %v", name, err)
 				}
 			}
 		}
@@ -59,32 +51,24 @@ func Unpack(req *http.Request, ptr interface{}) error {
 	return nil
 }
 
-//!-Unpack
-
-//!+populate
 func populate(v reflect.Value, value string) error {
 	switch v.Kind() {
 	case reflect.String:
 		v.SetString(value)
-
 	case reflect.Int:
 		i, err := strconv.ParseInt(value, 10, 64)
 		if err != nil {
 			return err
 		}
 		v.SetInt(i)
-
 	case reflect.Bool:
 		b, err := strconv.ParseBool(value)
 		if err != nil {
 			return err
 		}
 		v.SetBool(b)
-
 	default:
 		return fmt.Errorf("unsupported kind %s", v.Type())
 	}
 	return nil
 }
-
-//!-populate
