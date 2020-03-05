@@ -19,7 +19,11 @@ func main() {
 		c []int
 	}
 
-	// equivalent to pb := &x.b
+
+	// unsafe.Sizeof()
+	// unsafe.Offsetof()
+	// unsafe.Alignof()
+	// equivalent to
 	pb := (*int16)(unsafe.Pointer(
 		uintptr(unsafe.Pointer(&x)) + unsafe.Offsetof(x.b)))
 	*pb = 42
